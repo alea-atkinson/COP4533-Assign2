@@ -67,8 +67,7 @@ int lru(std::vector<int> requests, int k){
 }
 //evict request that occurs farthest in the future (or never occurs again).
 int optff(std::vector<int> requests, int k){
-    // Min-heap
-    std::priority_queue<int, std::vector<int>, std::greater<int>> min_pq;
+    
 }
 
 int main(){
