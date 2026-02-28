@@ -57,14 +57,46 @@ std::vector<int> readInput(){
     return requests;
     
 }
-//first in, first out
-int fifo(std::vector<int> requests, int k){
 
+//first in, first out
+int fifo(std::vector<int> requests, int k)
+{
+    int misses = 0;
+    std::queue<int> cache;
+    std::vector<int> requestsInCache;
+
+    for (int req : requests)
+    {
+        // Hit
+        if (std::find(requestsInCache.begin(), requestsInCache.end(), req) != requestsInCache.end())
+        {
+            continue;
+        }
+        // Miss
+        else
+        {
+            misses++;
+            
+            if (cache.size() == k)
+            {
+                int front = cache.front();
+                cache.pop();
+                requestsInCache.erase(std::find(requestsInCache.begin(), requestsInCache.end(), front));
+            }
+            
+            cache.push(req);
+            requestsInCache.push_back(req);
+        }
+    }
+    
+    return misses;
 }
+
 //last in, first out
 int lru(std::vector<int> requests, int k){
 
 }
+
 //evict request that occurs farthest in the future (or never occurs again).
 int optff(std::vector<int> requests, int k){
     
