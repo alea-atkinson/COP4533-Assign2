@@ -1,5 +1,6 @@
 #include "cache.h"
 #include <stack>
+#include <algorithm>
 
 //random input
 void genInput(int k, int m){
@@ -136,8 +137,67 @@ int lru(std::vector<int> requests, int k)
 }
 
 //evict request that occurs farthest in the future (or never occurs again).
-int optff(std::vector<int> requests, int k){
-    
+int optff(std::vector<int> requests, int k)
+{
+    int misses = 0;
+    std::vector<int> requestsInCache;
+
+    for (int i = 0; i < requests.size(); i++)
+    {
+        int req = requests[i];
+        auto it = std::find(requestsInCache.begin(), requestsInCache.end(), req);
+
+        // Hit
+        if (it != requestsInCache.end())
+        {
+            continue;
+        }
+        // Miss
+        else
+        {
+            misses++;
+
+            if (requestsInCache.size() == k)
+            {
+                // Setting positions to -1 because this index will never reach
+                int evictItem = -1;
+                int farthest = -1;
+
+                for (int cached : requestsInCache)
+                {
+                    // Next occurence
+                    int nextUse = -1; 
+                    for (int j = i + 1; j < requests.size(); j++)
+                    {
+                        if (requests[j] == cached)
+                        {
+                            nextUse = j;
+                            break;
+                        }
+                    }
+
+                    // Farthest possible
+                    if (nextUse == -1)
+                    {
+                        evictItem = cached;
+                        break;
+                    }
+
+                    if (nextUse > farthest)
+                    {
+                        farthest = nextUse;
+                        evictItem = cached;
+                    }
+                }
+
+                requestsInCache.erase(std::find(requestsInCache.begin(), requestsInCache.end(), evictItem));
+            }
+
+            requestsInCache.push_back(req);
+        }
+    }
+
+    return misses;
 }
 
 int main(){
