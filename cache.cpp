@@ -1,4 +1,5 @@
 #include "cache.h"
+#include <stack>
 
 //random input
 void genInput(int k, int m){
@@ -67,8 +68,10 @@ int fifo(std::vector<int> requests, int k)
 
     for (int req : requests)
     {
+        auto it = std::find(requestsInCache.begin(), requestsInCache.end(), req);
+
         // Hit
-        if (std::find(requestsInCache.begin(), requestsInCache.end(), req) != requestsInCache.end())
+        if (it != requestsInCache.end())
         {
             continue;
         }
@@ -76,9 +79,10 @@ int fifo(std::vector<int> requests, int k)
         else
         {
             misses++;
-            
+
             if (cache.size() == k)
             {
+                // Get first in element and remove it
                 int front = cache.front();
                 cache.pop();
                 requestsInCache.erase(std::find(requestsInCache.begin(), requestsInCache.end(), front));
@@ -92,8 +96,42 @@ int fifo(std::vector<int> requests, int k)
     return misses;
 }
 
-//last in, first out
-int lru(std::vector<int> requests, int k){
+// least recently used
+int lru(std::vector<int> requests, int k)
+{
+    int misses = 0;
+
+    // Back of the vector is the most recently used
+    std::vector<int> requestsInCache;
+
+    for (int req : requests)
+    {
+        auto it = std::find(requestsInCache.begin(), requestsInCache.end(), req);
+
+        // Hit
+        if (it != requestsInCache.end())
+        {
+            // Remove the element and add it to the back of the vector
+            requestsInCache.erase(it);
+            requestsInCache.push_back(req);
+        }
+        // Miss
+        else
+        {
+            misses++;
+
+            if (requestsInCache.size() == k)
+            {
+                // Remove the least recently usesd element
+                requestsInCache.erase(requestsInCache.begin());
+            }
+
+            // Add element to the back of the vector
+            requestsInCache.push_back(req);
+        }
+    }
+
+    return misses;
 
 }
 
