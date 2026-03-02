@@ -5,8 +5,8 @@
 //random input
 void genInput(int k, int m){
     std::vector<int> requests;
-    std::ofstream file("input.txt");
-    file<<k<<" "<<m;
+    std::ofstream file("io/input.txt");
+    file<<k<<" "<<m<<std::endl;
     //random IDs from 1 to 20
     for(int i=0; i<m; i++){
           file<<((std::rand() % 20) + 1)<<" ";
@@ -16,13 +16,13 @@ void genInput(int k, int m){
 
 //format output with #misses for each algorithm
 void genOutput(int fifo, int lru, int optff){
-    std::ofstream file("output.txt");
+    std::ofstream file("io/output.txt");
     file<<"FIFO: "<<fifo<<std::endl<<"LRU: "<<lru<<std::endl<<"OPTFF: "<<optff<<std::endl;
     file.close();
 }
 std::vector<int> readInput(){
     std::vector <int>requests;
-    std::ifstream file("input.txt");
+    std::ifstream file("io/input.txt");
     //invalid
     if (!file) {
         return requests;
@@ -30,7 +30,7 @@ std::vector<int> readInput(){
     std::string line;
     int count=0;
     int firstLine=0;
-    while (file >> line) { // Reads one line at a time
+    while (std::getline(file, line)) { // Reads one line at a time
         std::stringstream ss(line); //Create a stringstream from the line
         std::string process;
         while (std::getline(ss, process, ' ')) { 
@@ -44,16 +44,20 @@ std::vector<int> readInput(){
     file.close();
 
     if(requests[0]<1){ //capacity less than 1
-        requests.empty();
+        std::cout<<"Invalid capacity"<<std::endl;
+        requests.clear();
     }
     else if(count<2){ //only 1 line
-        requests.empty();
+        std::cout<<"Invalid line spacing"<<std::endl;
+        requests.clear();
     }
     else if(firstLine!=2){ //incorrect formatting of first line
-        requests.empty();
+        std::cout<<"Invalid format"<<std::endl;
+        requests.clear();
     }
     else if(requests.size()-2 != requests[1]){ //num of requests doesn't match input
-        requests.empty();
+        std::cout<<"Invalid request amount"<<std::endl;
+        requests.clear();
     }
     //first two elements are k and m, rest are requests
     return requests;
@@ -200,10 +204,18 @@ int optff(std::vector<int> requests, int k)
     return misses;
 }
 
-int main(){
+int main(int argc, char* argv[]){
+    if(argc<3){
+        std::cout<<"Please provide 2 arguments"<<std::endl;
+        return -1;
+    }
+    int kInput= std::stoi(argv[1]);
+    int mInput= std::stoi(argv[2]);
+
+    genInput(kInput, mInput);
     std::vector<int> requests= readInput();
     if(requests.size()==0){
-        std::cout<<"Invalid file"<<std::endl;
+        std::cout<<"Process aborted"<<std::endl;
         return -1;
     }
     //populate k and m and remove them from vector
