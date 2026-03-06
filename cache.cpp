@@ -222,7 +222,7 @@ int main(int argc, char* argv[]){
     int k= requests[0];
     int m= requests[1];
     requests.erase(requests.begin() + 0);
-    requests.erase(requests.begin() + 1);
+    requests.erase(requests.begin() + 0);
     //execute algorithms
     int fifoOut= fifo(requests, k);
     int lruOut= lru(requests, k);
