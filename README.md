@@ -1,4 +1,5 @@
 # COP4533 Programming Assignment 2  
+Alea Atkinson and Kristen Moy
 ### To Run:
 1. Clone the repository into a code editor such as vs code
 2. To genereate a cache.exe file, run the following command in the terminal: **g++ -o cache cache.cpp**
